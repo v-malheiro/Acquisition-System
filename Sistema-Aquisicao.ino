@@ -1,66 +1,68 @@
-/* Code to run 2 stepper motor and shaker */
-// libraries
+/*
+  Victor Hugo Enes Malheiro
+*/
+
+/* Code to run the stepper motor */
+
+//--------------------------------- LIBRARIES ---------------------------------//
 #include <TimerOne.h>
 #define COMMON_ANODE
 
-// declares
-//int IN1 = 2; //define red led
-//int IN2 = 3; //define white led
-//int IN3 = 4; //define yellow led
-int IN4 = 20; //define blue led
-int acq = 5; //define acquisition module
-int shaker = 6; //define shaker module -> nao utilizado
-int acq2 = 21; //define acquisition module for triggering by function generator -> nao utilizado
+//--------------------------------- DECLARES ---------------------------------//
+int IN4 = 20;   // define blue led
+int acq = 5;    // define acquisition module
+int shaker = 6; // define shaker module -> NAO UTILIZADO
+int acq2 = 21;  // define acquisition module for triggering by function generator -> NAO UTILIZADO
 
 //-------- Leds Pin --------//
-const int ledR = 4; // define red led pin
-const int ledG = 3; // define green led pin
-const int ledB = 2; // define blue led pin
+const int ledR = 41; // define red led pin
+const int ledG = 39; // define green led pin
+const int ledB =37; // define blue led pin
  
-//motor 1 - rotation around axis
-int PUL = 10;   //define Pulse pin - using just the positive 
-int EN = 8;    //define Enable pin - using just the positive 
-int DIR = 9;  //define Direction pin - using just the positive
+//-------- Motor: Rotation --------//
+int PUL = 10; // define Pulse pin - using just the positive 
+int EN = 8;   // define Enable pin - using just the positive 
+int DIR = 9;  // define Direction pin - using just the positive
 
-//motor 2 - translation
-int A = 10; // for rotation -> nao utilizado
-int B = 11; // for rotation -> nao utilizado
-int C = 12; // for rotation -> nao utilizado
-int D = 13; // for rotation -> nao utilizado
-int E = 14; // for enable -> nao utilizado
-int F = 15; // for enable -> nao utilizado
+//-------- Motor: Translation --------//
+int A = 10; // for rotation -> NAO UTILIZADO
+int B = 11; // for rotation -> NAO UTILIZADO
+int C = 12; // for rotation -> NAO UTILIZADO
+int D = 13; // for rotation -> NAO UTILIZADO
+int E = 14; // for enable -> NAO UTILIZADO
+int F = 15; // for enable -> NAO UTILIZADO
 
-const int buttonPin1 = 47; // define the pushbutton (white) pin for start
-const int buttonPin2 = 49; // define the pushbutton (red) pin for translation in forward
-const int buttonPin3 = 51; // define the pushbutton (yellow) pin for translation in backward
-const int buttonPin4 = 45; // define the pushbutton (blue) pin for shaking acquision
-const int buttonPin5 = 31; // define the pushbutton (none) pin for returning to initial point
-
+//-------- Buttons --------//
+const int buttonWhite = 47;  // define pin for start
+const int buttonRed = 49;    // define pin for translation in forward
+const int buttonYellow = 51; // define pin for translation in backward
+const int buttonBlue = 45;   // define pin for stop
 
 // variables will change:
+//TODO: posso usar apenas 1 button state??
+//TODO: usar funções ou deixar tudo no loop mesmo??
+//TODO: terminar de comentar e limpar o codigo
 int buttonState1 = 0;         // variable for reading the pushbutton status
 int buttonState2 = 0;
 int buttonState3 = 0;
 int buttonState4 = 0;
-int buttonState5 = 0;
-float frequencia = 0;
+
 int contador = 0;
 int contador2 = 0;
+
 bool inicia_aquisicao = false;
 bool inicia_aquisicao2 = false;
 bool inicia_aquisicao3 = false;
 
+float frequencia = 0; -> NAO UTILIZADO
 
-// variable defines
-void setup() {
-  pinMode (PUL, OUTPUT);
-  pinMode (DIR, OUTPUT);
-  pinMode (EN, OUTPUT);
-  digitalWrite (EN, LOW);
+//--------------------------------- SETUP AND PIN MODES ---------------------------------//
+void setup(){
   Serial.begin(9600);
-//  pinMode(IN1,OUTPUT);
-//  pinMode(IN2,OUTPUT);
-//  pinMode(IN3,OUTPUT);
+  pinMode(PUL, OUTPUT);
+  pinMode(DIR, OUTPUT);
+  pinMode(EN, OUTPUT);
+  digitalWrite(EN, LOW);
   pinMode(IN4,OUTPUT);
   pinMode(A, OUTPUT);
   pinMode(B, OUTPUT);
@@ -71,19 +73,17 @@ void setup() {
   pinMode(acq,OUTPUT);
   pinMode(acq2,OUTPUT);
   pinMode(shaker, OUTPUT);
-  pinMode(buttonPin1, INPUT);
-  pinMode(buttonPin2, INPUT);
-  pinMode(buttonPin3, INPUT);
-  pinMode(buttonPin4, INPUT);
-  pinMode(buttonPin5, INPUT);
-  Timer1.initialize(1000000);
-//-------- Leds Mode --------//
+  pinMode(buttonWhite, INPUT);
+  pinMode(buttonRed, INPUT);
+  pinMode(buttonYellow, INPUT);
+  pinMode(buttonBlue, INPUT);
   pinMode(ledR,OUTPUT);
   pinMode(ledG,OUTPUT);
   pinMode(ledB,OUTPUT);
+  Timer1.initialize(1000000);
 }
 
-//-------- Function: Define Colors to the Led --------//
+//-------- Function: Define Colors to the Leds --------//
 void setColor(int red, int green, int blue){
   analogWrite(ledR, red);
   analogWrite(ledG, green);
@@ -99,7 +99,7 @@ void loop() {
 ///////////////////////////////////////////// FORWARD MOVIMENT /////////////////////////////////////////////
 
   // read the state of the pushbutton2 value:
-  buttonState2 = digitalRead(buttonPin2); 
+  buttonState2 = digitalRead(buttonRed); 
   // check if the pushbutton2 is pressed. If it is, the button state is LOW:
   if (buttonState2 == HIGH) {
     //digitalWrite(IN1, 1); // red led - ON
@@ -140,7 +140,7 @@ void loop() {
       digitalWrite(F, 0);
       
       ////////////////////////////// STOP SYSTEM ////////////////////////////////
-      buttonState4 = digitalRead(buttonPin4);
+      buttonState4 = digitalRead(buttonBlue);
       //digitalWrite(IN4, 0); // blue led - ON 
   
       // check if the pushbutton1 is pressed. If it is, the button state is LOW:
@@ -161,7 +161,7 @@ void loop() {
 ///////////////////////////////////////////// BACKWARD MOVIMENT /////////////////////////////////////////////
   
   // read the state of the pushbutton3 value:
-  buttonState3 = digitalRead(buttonPin3); 
+  buttonState3 = digitalRead(buttonYellow); 
   // check if the pushbutton2 is pressed. If it is, the button state is LOW:
   if (buttonState3 == HIGH) {
     // digitalWrite(IN3, 1); // yellow led - ON
@@ -202,7 +202,7 @@ void loop() {
       digitalWrite(F, 0);
  
       ////////////////////////////// STOP SYSTEM ////////////////////////////////
-      buttonState4 = digitalRead(buttonPin4);
+      buttonState4 = digitalRead(buttonBlue);
       //digitalWrite(IN4, 0); // blue led - ON 
   
       // check if the pushbutton1 is pressed. If it is, the button state is LOW:
@@ -224,7 +224,7 @@ void loop() {
 ///////////////////////////////////////////// ROTATION MOVIMENT + ACQUISITION /////////////////////////////////////////////
 
   // read the state of the pushbutton1 value:
-  buttonState1 = digitalRead(buttonPin1);
+  buttonState1 = digitalRead(buttonWhite);
   //digitalWrite(IN2, 0); // white led - OFF
   
   // check if the pushbutton1 is pressed. If it is, the button state is LOW:
@@ -263,7 +263,7 @@ void loop() {
       delay(1000); //delay time between two rotation+acquisition
     
       ////////////////////////////// STOP SYSTEM ////////////////////////////////
-      buttonState4 = digitalRead(buttonPin4);
+      buttonState4 = digitalRead(buttonBlue);
       //digitalWrite(IN4, 0); // blue led - ON 
   
       // check if the pushbutton1 is pressed. If it is, the button state is LOW:
@@ -286,9 +286,10 @@ void loop() {
     }while (inicia_aquisicao);
     //digitalWrite(IN2,0); // white led - OFF
  }
-
  
+}
 
+/*
 ///////////////////////////////////////////// ROTATION MOVIMENT BACK TO INITIAL /////////////////////////////////////////////
 
   // read the state of the pushbutton1 value:
@@ -349,7 +350,7 @@ void loop() {
 
   
 ///////////////////////////////////////////// ROTATION MOVIMENT + ACQUISITION + SHAKER /////////////////////////////////////////////
-  /*
+
   // read the state of the pushbutton4 value:
   buttonState4 = digitalRead(buttonPin4);
   digitalWrite(IN4, 0); // blue led - ON
@@ -411,5 +412,3 @@ void loop() {
   }while (inicia_aquisicao2);
   digitalWrite(IN4,0); // blue led - OFF
  }*/
-
-}
